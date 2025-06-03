@@ -1,0 +1,292 @@
+@use "../helpers" as *;
+
+.user {
+  &-header {
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(
+        to right,
+        rgba(182, 211, 241, 1) 0%,
+        rgba(253, 247, 225, 1) 75%
+    );
+
+    &__link {
+      @include fluid-text(24, 18);
+
+      line-height: 1.5;
+      color: var(--color-indigo-700);
+      font-weight: 00;
+      display: flex;
+      flex-direction: column;
+      row-gap: 20px;
+    }
+  }
+
+  &-main {
+    background-color: var(--color-gray-60);
+    height: 100vh;
+
+    &__container {
+      @include fluid-text(16, 14);
+
+      line-height: 1.5;
+      color: var(--color-black-80);
+      font-weight: 400;
+      display: flex;
+      flex-direction: column;
+      row-gap: 20px;
+    }
+
+    &__header {
+      display: flex;
+      flex-direction: column;
+      row-gap: 12px;
+
+      &-title {
+        @include fluid-text(24, 18);
+
+        color: var(--color-indigo-700);
+        font-weight: 500;
+        margin: 0;
+      }
+
+      &-text {
+        color: var(--color-muted-rose-300);
+      }
+    }
+
+    &__profile {
+      border-radius: var(--border-radius);
+      background-color: var(--color-white);
+      padding: 8vw #{rem(28)} 8vw #{rem(112)}; // Можливо потрібно буде змінити
+      display: flex;
+      flex-direction: column;
+      row-gap: 32px;
+
+      &-overview {
+        display: flex;
+        justify-content: space-between;
+
+        &-contact {
+          display: flex;
+          column-gap: 24px;
+          align-items: center;
+        }
+
+        &-image {
+        }
+
+        &-info {
+        }
+
+        &-name {
+          @include fluid-text(20, 14);
+
+          color: var(--color-black);
+          font-weight: 500;
+        }
+
+        &-email {
+          color: var(--color-black-50);
+        }
+
+        &-edit {
+          background-color: var(--color-blue-500-100);
+          color: var(--color-white);
+          padding: 10px 32px;
+          border-radius: var(--border-radius);
+          border: 1px solid transparent;
+
+          &-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+        }
+      }
+
+      &-settings {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        row-gap: 24px;
+        column-gap: 32px;
+
+        &-name {
+          display: flex;
+          flex-direction: column;
+          row-gap: 12px;
+
+          &-label {
+          }
+
+          &-input {
+            color: var(--color-black-40);
+            padding: 14px 20px;
+            background-color: var(--color-gray-60);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+          }
+        }
+
+        &-nickname {
+          display: flex;
+          flex-direction: column;
+          row-gap: 12px;
+
+          &-label {
+          }
+
+          &-input {
+            color: var(--color-black-40);
+            padding: 14px 20px;
+            background-color: var(--color-gray-60);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+          }
+        }
+
+        &-gender {
+          display: flex;
+          flex-direction: column;
+          row-gap: 12px;
+
+          &-label {
+          }
+
+          &-select {
+            color: var(--color-black-40);
+            padding: 14px 20px;
+            background-color: var(--color-gray-60);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+          }
+        }
+
+        &-country {
+          display: flex;
+          flex-direction: column;
+          row-gap: 12px;
+
+          &-label {
+          }
+
+          &-select {
+            color: var(--color-black-40);
+            padding: 14px 20px;
+            background-color: var(--color-gray-60);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+          }
+        }
+
+        &-timezone {
+          display: flex;
+          flex-direction: column;
+          row-gap: 12px;
+
+          &-label {
+          }
+
+          &-select {
+            color: var(--color-black-40);
+            padding: 14px 20px;
+            background-color: var(--color-gray-60);
+            border: 1px solid transparent;
+            border-radius: var(--border-radius);
+          }
+        }
+      }
+
+      &-emails {
+        display: inline-flex;
+        flex-direction: column;
+
+        row-gap: 20px;
+
+        &-title {
+          @include fluid-text(18, 14);
+
+          color: var(--color-black);
+          font-weight: 500;
+        }
+
+        &-list {
+          display: flex;
+          column-gap: 40px;
+        }
+
+        &-item {
+          display: flex;
+          column-gap: 20px;
+        }
+
+        &-image {
+          background-color: var(--color-blue-500-10);
+          padding: 12px;
+          border-radius: 50%;
+        }
+
+        &-info {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        &-email {
+          color: var(--color-black);
+        }
+
+        &-text {
+          color: var(--color-black-50);
+        }
+
+        &-button {
+          background-color: var(--color-blue-500-10);
+          color: var(--color-blue-500-100);
+          padding: 10px 24px;
+          border: 1px solid transparent;
+          border-radius: var(--border-radius);
+        }
+      }
+
+      &-actions {
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        margin-top: 32px;
+      }
+
+      &-import {
+        padding: 10px 20px;
+        border: 1px solid var(--color-blue-500-100);
+        border-radius: var(--border-radius);
+        background-color: var(--color-white);
+        color: var(--color-blue-500-100);
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--color-blue-500-10);
+        }
+      }
+
+      &-export {
+        padding: 10px 20px;
+        border: 1px solid transparent;
+        border-radius: var(--border-radius);
+        background-color: var(--color-blue-500-100);
+        color: var(--color-white);
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--color-blue-500-80);
+        }
+      }
+    }
+  }
+}

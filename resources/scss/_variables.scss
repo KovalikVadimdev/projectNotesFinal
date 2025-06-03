@@ -1,0 +1,62 @@
+@use "helpers" as *;
+
+:root {
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+
+  --color-gray-50: #fafafa;
+  --color-gray-60: #f9f9f9;
+  --color-gray-75: #f7f7f7;
+  --color-gray-90: #eeeeee;
+  --color-gray-100: #f4f4f5;
+  --color-gray-250: #e2e2e5;
+  --color-gray-300: #d7d7d7;
+  --color-gray-500: #71717a;
+  --color-gray-900: #18181b;
+
+  --color-blue-50: #eff6ff;
+  --color-blue-100: #bfdbfe;
+  --color-blue-300: #60a5fa;
+  --color-blue-500: #3b82f6;
+
+  --color-rose-100: #ffe4e6;
+  --color-rose-500: #f43f5e;
+
+  /* --- Custom Added Colors --- */
+  --color-indigo-700: #3e435d; // Темно-синьо-фіолетовий
+  --color-muted-rose-300: #ada7a7; // Приглушено-рожевий/сірий
+  --color-black-40: rgba(0, 0, 0, 0.4); // Чорний 40%
+  --color-black-50: rgba(0, 0, 0, 0.5); // Чорний 50%
+  --color-black-80: rgba(0, 0, 0, 0.8); // Чорний 80%
+  --color-blue-500-100: rgb(65, 130, 249); // Прозорий синій (10%)
+  --color-blue-500-10: rgba(65, 130, 249, 0.1); // Прозорий синій (10%)
+
+  --font-family-base: "Inter", "sans-serif";
+
+  --container-width-main: #{rem(1110)};
+  --container-width-aside: #{rem(270)};
+  --container-width-user: #{rem(1358)};
+  --container-padding-x: #{rem(15)};
+
+  --transition-duration: 0.2s;
+
+  --border-radius: #{rem(8)};
+}
+
+// --color-lightBlue-500: #0EA5E9;
+// --color-lightBlue-700: #0369A1;
+// --color-violet-500: #885CF6;
+// --color-violet-700: #6D28D9;
+// --color-amber-500: #F59E0B;
+// --color-amber-700: #B45309;
+// --color-emerald-500: #10B981;
+// --color-emerald-700: #047857;
+// --color-rose-500: #F43F5E;
+// --color-rose-700: #BE123C;
+
+// @include laptop {
+//   --container-width: #{rem(1240)};
+// }

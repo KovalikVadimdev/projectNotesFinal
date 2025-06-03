@@ -1,0 +1,9 @@
+@use "../helpers" as *;
+
+.main {
+  &__container {
+    display: grid;
+    grid-template-columns: 300px auto;
+    height: 100vh;
+  }
+}

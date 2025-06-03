@@ -1,0 +1,16 @@
+@use "normalize";
+@use "fonts";
+@use "variables";
+@use "utils";
+@use "globals";
+
+@use "./blocks/main";
+@use "./blocks/calendar-sidebar";
+
+@use "./blocks/calendar";
+
+@use "./blocks/user-main";
+
+@use "./blocks/signin-modal";
+
+@use "./blocks/note";

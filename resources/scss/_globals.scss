@@ -1,0 +1,85 @@
+@use "helpers" as *;
+
+html {
+  &.is-lock {
+    overflow: hidden;
+  }
+}
+
+body {
+  @include fluid-text(14, 12);
+
+  font-family: var(--font-family-base);
+  color: var(--color-gray-500);
+  background-color: var(--color-white);
+  line-height: 1.33;
+  font-weight: 600;
+}
+
+h1,
+.h1 {
+  @include fluid-text(26, 18);
+  font-weight: 500;
+}
+
+h3,
+.h3 {
+  @include fluid-text(13, 12);
+
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+a,
+button,
+label,
+input,
+textarea,
+select,
+svg * {
+  transition-duration: var(--transition-duration);
+}
+
+a {
+  color: inherit;
+
+  @include hover {
+    color: var(--color-text-primary);
+  }
+
+  &[class] {
+    text-decoration: none;
+  }
+}
+
+:focus-visible {
+  outline: rem(2) dashed var(--color-gray-100); // You may need to change this to the value
+  outline-offset: rem(4);
+  transition-duration: 0s !important;
+}
+
+a,
+button {
+  &[aria-label] {
+    position: relative;
+
+    &::before {
+      @include abs-center;
+      @include square(rem(44));
+
+      content: "";
+    }
+  }
+}
+
+.bold {
+  font-weight: 900;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}

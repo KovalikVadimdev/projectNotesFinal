@@ -1,0 +1,40 @@
+@use "helpers" as *;
+
+.container {
+  max-width: calc(var(--container-width-main) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding: var(--container-padding-x);
+}
+
+.container-alt {
+  max-width: calc(
+    var(--container-width-aside) + var(--container-padding-x) * 2
+  );
+  margin-inline: auto;
+  padding: var(--container-padding-x);
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+}
+
+.user-main__container {
+  max-width: calc(var(--container-width-user) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding: var(--container-padding-x);
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+.hidden-mobile {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+.visible-mobile {
+  @include mobile-above {
+    display: none !important;
+  }
+}

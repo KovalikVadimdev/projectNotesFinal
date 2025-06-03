@@ -1,0 +1,292 @@
+@use "../helpers" as *;
+
+.signin-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(52, 54, 66, 0.9);
+  z-index: 3;
+  overflow-y: auto;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+
+  &--is-visible {
+    visibility: visible;
+    opacity: 1;
+
+    .signin-modal__container {
+      transform: translateY(0);
+    }
+  }
+
+  &__container {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    margin: 3em auto 4em;
+    cursor: auto;
+    border-radius: 0.25em;
+    transform: translateY(-30px);
+    transition: transform 0.3s;
+
+    @media (min-width: 600px) {
+      margin: 4em auto;
+    }
+  }
+
+  &__switcher {
+    &:after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+
+    li {
+      width: 50%;
+      float: left;
+      text-align: center;
+
+      &:first-child a {
+        border-radius: 0.25em 0 0 0;
+      }
+
+      &:last-child a {
+        border-radius: 0 0.25em 0 0;
+      }
+    }
+
+    a {
+      display: block;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      background: #d2d8d8;
+      color: #809191;
+
+      &.selected {
+        background: #fff;
+        color: #505260;
+      }
+
+      @media (min-width: 600px) {
+        height: 70px;
+        line-height: 70px;
+      }
+    }
+  }
+
+  &__block {
+    display: none;
+
+    &--is-selected {
+      display: block;
+    }
+  }
+
+  &__form {
+    padding: 1.4em;
+
+    @media (min-width: 600px) {
+      padding: 2em;
+    }
+  }
+
+  &__fieldset {
+    position: relative;
+    margin: 1.4em 0;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    @media (min-width: 600px) {
+      margin: 2em 0;
+    }
+  }
+
+  &__label {
+    font-size: 1.4rem;
+
+    &--image-replace {
+      display: inline-block;
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 20px;
+      width: 20px;
+      overflow: hidden;
+      text-indent: 100%;
+      white-space: nowrap;
+      color: transparent;
+      background-repeat: no-repeat;
+      background-position: 50% 0;
+    }
+
+    &--username {
+      background-image: url("../iconsModal/username.svg");
+    }
+
+    &--email {
+      background-image: url("../iconsModal/email.svg");
+    }
+
+    &--password {
+      background-image: url("../iconsModal/password.svg");
+    }
+  }
+
+  &__input {
+    margin: 0;
+    padding: 0;
+    border-radius: 0.25em;
+
+    &--full-width {
+      width: 100%;
+    }
+
+    &--has-padding {
+      padding: 12px 20px 12px 50px;
+
+      @media (min-width: 600px) {
+        padding: 16px 20px 16px 50px;
+      }
+    }
+
+    &--has-border {
+      border: 1px solid #d2d8d8;
+      appearance: none;
+
+      &:focus {
+        border-color: #343642;
+        box-shadow: 0 0 5px rgba(52, 54, 66, 0.1);
+        outline: none;
+      }
+    }
+
+    &--has-error {
+      border: 1px solid #d76666;
+    }
+
+    &[type="button"] {
+      padding: 16px 0;
+      cursor: pointer;
+      background: #2f889a;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      appearance: none;
+      font-smoothing: antialiased;
+
+      &:hover,
+      &:focus {
+        background: #3599ae;
+        outline: none;
+      }
+
+      @media (min-width: 600px) {
+        padding: 16px 0;
+      }
+    }
+  }
+
+  &__hide-password {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 6px 15px;
+    border-left: 1px solid #d2d8d8;
+    color: #343642;
+  }
+
+  &__link {
+    text-decoration: none;
+  }
+
+  &__error {
+    display: inline-block;
+    position: absolute;
+    left: -5px;
+    bottom: -35px;
+    background: rgba(215, 102, 102, 0.9);
+    padding: 0.8em;
+    z-index: 2;
+    color: #fff;
+    font-size: 1.3rem;
+    border-radius: 0.25em;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s 0s, visibility 0s 0.2s;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 22px;
+      bottom: 100%;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid rgba(215, 102, 102, 0.9);
+    }
+
+    &--is-visible {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.2s 0s, visibility 0s 0s;
+    }
+  }
+
+  &__message {
+    padding: 1.4em 1.4em 0;
+    font-size: 1.4rem;
+    line-height: 1.4;
+    text-align: center;
+
+    @media (min-width: 600px) {
+      padding: 2em 2em 0;
+    }
+  }
+
+  &__bottom-message {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: -30px;
+    text-align: center;
+    font-size: 1.4rem;
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+    }
+  }
+
+  &__close {
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    right: 0;
+    top: -40px;
+    background: url("public/icons/close.svg") no-repeat center center;
+    color: transparent;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+
+    @media (min-width: 1170px) {
+      display: none;
+    }
+  }
+}
