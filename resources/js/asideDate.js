@@ -3,14 +3,33 @@
 const titleElement = document.getElementById('month-title');
 const highlightSpan = document.getElementById('month-title__highlight');
 
-const month = [
+const prevMonth = document.getElementById('prev-month');
+const nextMonth = document.getElementById('next-month');
+
+const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
-const date = new Date();
-const currentMonth = month[date.getMonth()];
-const currentYear = date.getFullYear();
+let currentDate = new Date(); // початкова дата
 
-titleElement.firstChild.nodeValue = `${currentMonth} `;
-highlightSpan.textContent = currentYear;
+function updateTitle(date) {
+  const currentMonth = monthNames[date.getMonth()];
+  const currentYear = date.getFullYear();
+
+  titleElement.firstChild.nodeValue = `${currentMonth} `;
+  highlightSpan.textContent = currentYear;
+}
+
+prevMonth.addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  updateTitle(currentDate);
+});
+
+nextMonth.addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  updateTitle(currentDate);
+});
+
+// Перший рендер
+updateTitle(currentDate);

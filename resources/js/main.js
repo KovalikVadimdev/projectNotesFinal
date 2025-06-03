@@ -1,3 +1,10 @@
-import './modal.js';
+import './state.js';
 import './calendarAside.js';
 import './asideDate.js';
+import './modal.js';
+import './switchDay.js';
+import './asideTask.js';
+import './mainDate.js';
+import './notes.js';
+import './notes-render.js';
+import './hash.js';
