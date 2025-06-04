@@ -130,6 +130,7 @@ signinBtn.addEventListener("click", async (e) => {
         handleUserLogin({ username: nickname, fullName: fullname }, true);
 
         document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
+        location.reload();
       } else {
         alert("Неправильні облікові дані");
       }
