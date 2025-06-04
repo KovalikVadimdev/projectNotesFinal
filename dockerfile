@@ -20,7 +20,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Установка Node.js-зависимостей и сборка фронтенда
-RUN npm install && npm run build
+RUN npm install 
 
 # Кеширование конфигурации, роутов и вьюшек
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
