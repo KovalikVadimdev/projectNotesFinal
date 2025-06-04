@@ -6,12 +6,10 @@ use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class EditNoteController extends Controller {
-  public function editNote(Request $request) {
+class DeleteNoteController extends Controller {
+  public function deleteNote(Request $request) {
     $validator = Validator::make($request->all(), [
       'id_note' => 'required|integer|exists:notes,id_note',
-      'text' => 'required|string',
-      'text_hash' => 'required|string'
     ]);
 
     if ($validator->fails()) {
@@ -24,14 +22,8 @@ class EditNoteController extends Controller {
       return response()->json(['error' => 'Note not found'], 404);
     }
 
-    $note->text = $request->input('text');
-    $note->text_hash = $request->input('text_hash');
+    $note->delete();
 
-    $note->save();
-
-    return response()->json([
-      'message' => 'Note edited',
-      'hash' => $note->text_hash
-    ], 200);
+    return response()->json(['message' => 'Note deleted'], 200);
   }
 }

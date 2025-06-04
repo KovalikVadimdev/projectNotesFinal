@@ -21,7 +21,11 @@ export async function deleteNote(id_note) {
     }
 
     const data = await response.json();
-    return data;
+    return {
+      status: response.status,
+      ok: response.ok,
+      data,
+    };
   } catch (error) {
     console.error('Помилка додавання замітки:', error);
     throw error;

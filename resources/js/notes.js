@@ -90,7 +90,7 @@ export function createNoteBox(existingNoteElement = null) {
       note.dataset.noteId = noteId;
 
       // Заміна в notesByDate
-      const index = notesByDate[currentDate].findIndex(n => n.id === noteId);
+      const index = notesByDate[currentDate].findIndex(n => n.id === Number(noteId));
       if (index !== -1) {
         notesByDate[currentDate][index] = {
           id: Number(noteId),
@@ -101,61 +101,40 @@ export function createNoteBox(existingNoteElement = null) {
 
       const allNotes = JSON.parse(localStorage.getItem("all_notes")) || {};
       if (allNotes[currentDate]) {
-        const i = allNotes[currentDate].findIndex(n => n.id === noteId);
-        if (i !== -1) {
-          allNotes[currentDate][i] = {
-            id: Number(noteId),
-            text: encoded_text,
-            hash: hash_text
-          };
+        const allNotesIndex = allNotes[currentDate].findIndex(n => n.id === Number(noteId));
+        if (allNotesIndex !== -1) {
+          allNotes[currentDate][allNotesIndex].text = encoded_text;
+          allNotes[currentDate][allNotesIndex].hash = hash_text;
+          localStorage.setItem("all_notes", JSON.stringify(allNotes));
         }
-        localStorage.setItem("all_notes", JSON.stringify(allNotes));
       }
 
-      const editNotes = await editNote(Number(noteId), encoded_text, hash_text);
+      try {
+        const updatedNoteData = await editNote(Number(noteId), encoded_text, hash_text);
 
-      // ДОРОБИТИ НОРМАЛЬНУ ЗМІНУ HASH ЗАМІТКИ У ALL_NOTES_SYNCED, і так само і для видалення
-      const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
-      if (!syncedNotes[currentDate]) syncedNotes[currentDate] = [];
-
-      // Діагностування: перевіряємо структуру існуючих нотаток
-      console.log("Існуючі нотатки:", syncedNotes[currentDate]);
-      console.log("Шукаємо noteId:", noteId);
-
-      // Спробуємо різні варіанти пошуку
-      const existingNoteIndex = syncedNotes[currentDate].findIndex(n => {
-        // Перевіряємо різні можливі поля для ID
-        return n.id === noteId || n.noteId === noteId || n.note_id === noteId;
-      });
-
-      console.log("Знайдений індекс:", existingNoteIndex);
-
-      const newHash = editNotes?.text_hash || hash_text;
-
-      if (existingNoteIndex !== -1) {
-        // Оновити існуючу нотатку
-        console.log("Оновлюємо існуючу нотатку");
-        syncedNotes[currentDate][existingNoteIndex].hash = newHash;
-      } else {
-        // Додати нову нотатку
-        console.log("Додаємо нову нотатку");
-        syncedNotes[currentDate].push({
-          id: Number(noteId),
-          noteId: noteId, // Додаємо обидва поля для сумісності
-          hash: newHash
-        });
+        // Оновлення в localStorage "all_notes_synced"
+        const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
+        if (syncedNotes[currentDate]) {
+          const syncedIndex = syncedNotes[currentDate].findIndex(n => n.id === Number(noteId));
+          if (syncedIndex !== -1) {
+            // Використовуємо дані, що прийшли у відповідь від сервера
+            syncedNotes[currentDate][syncedIndex].id = Number(updatedNoteData.id); // Оновлюємо id, якщо сервер його повернув
+            syncedNotes[currentDate][syncedIndex].hash = updatedNoteData.hash; // Оновлюємо hash_text з відповіді
+            localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+          }
+        }
+      } catch (error) {
+        console.error("Не вдалося оновити замітку на сервері:", error);
+      } finally {
+        // Завжди закриваємо вікно редагування
+        dayEvent.replaceChild(note, container);
       }
-
-      localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
-      console.log("Оновлені нотатки:", syncedNotes[currentDate]);
-
-      dayEvent.replaceChild(note, container);
 
     } else {
       const noteId = Date.now().toString();
       note.dataset.noteId = noteId;
       notesByDate[currentDate].push({
-        id: noteId,
+        id: Number(noteId),
         text: encoded_text,
         hash: hash_text
       });
@@ -167,28 +146,34 @@ export function createNoteBox(existingNoteElement = null) {
       }
 
       allNotes[currentDate].push({
-        id: noteId,
+        id: Number(noteId),
         text: encoded_text,
         hash: hash_text
       });
 
       localStorage.setItem("all_notes", JSON.stringify(allNotes));
 
-      const addNotes = await addNote(Number(noteId), Number(idUser), currentDate, encoded_text, hash_text);
+      try {
+        const addNotes = await addNote(Number(noteId), Number(idUser), currentDate, encoded_text, hash_text);
+        console.log("addNotes response:", addNotes);
+        const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
 
-      const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
+        if (!syncedNotes[currentDate]) {
+          syncedNotes[currentDate] = [];
+        }
 
-      if (!syncedNotes[currentDate]) {
-        syncedNotes[currentDate] = [];
+        syncedNotes[currentDate].push({
+          id: Number(addNotes.id_note),
+          hash: addNotes.text_hash
+        });
+
+        localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+      } catch (error) {
+        console.error("Не вдалося синхронізувати замітку з сервером:", error);
+      } finally {
+        // Закриваємо вікно редагування незалежно від результату
+        dayEvent.replaceChild(note, container);
       }
-
-      syncedNotes[currentDate].push({
-        id: addNotes.id_note,
-        hash: addNotes.text_hash
-      });
-      localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
-
-      dayEvent.replaceChild(note, container);
     }
     renderTaskList(new Date())
   };
@@ -219,66 +204,54 @@ export function createNoteBox(existingNoteElement = null) {
 
         // Видалення з notesByDate
         if (notesByDate[currentDate]) {
-          notesByDate[currentDate] = notesByDate[currentDate].filter(note => note.id !== noteId);
+          notesByDate[currentDate] = notesByDate[currentDate].filter(note => note.id !== Number(noteId));
+          console.log(notesByDate); // Перевірка після фільтрації
 
-          // Якщо більше немає заміток у дні — видалити день із notesByDate (не обов’язково, але красиво)
           if (notesByDate[currentDate].length === 0) {
             delete notesByDate[currentDate];
           }
         }
 
-        const allNotesStr = localStorage.getItem("all_notes");
-        console.log(allNotesStr)
-        if (allNotesStr) {
-          const allNotes = JSON.parse(allNotesStr);
-
-          // Перебираємо всі дати
-          for (const dateKey in allNotes) {
-            if (Array.isArray(allNotes[dateKey])) {
-              allNotes[dateKey] = allNotes[dateKey].filter(note => note.id !== noteId);
-
-              // Якщо масив порожній, видаляємо дату
-              if (allNotes[dateKey].length === 0) {
-                delete allNotes[dateKey];
-              }
-            }
+        let allNotes = JSON.parse(localStorage.getItem("all_notes")) || {};
+        if (allNotes[currentDate]) {
+          allNotes[currentDate] = allNotes[currentDate].filter(note => String(note.id) !== noteId);
+          if (allNotes[currentDate].length === 0) {
+            delete allNotes[currentDate];
           }
-
           localStorage.setItem("all_notes", JSON.stringify(allNotes));
         }
 
-        const delNote = await deleteNote(noteId);
+        try {
+          const delNote = await deleteNote(Number(noteId));
 
-        const allNotesSyncedStr = localStorage.getItem("all_notes_synced");
-        console.log(allNotesSyncedStr)
-        if (allNotesSyncedStr) {
-          const allNotesSynced = JSON.parse(allNotesSyncedStr);
-
-          // Перебираємо всі дати
-          for (const dateKey in allNotesSynced) {
-            if (Array.isArray(allNotesSynced[dateKey])) {
-              allNotesSynced[dateKey] = allNotesSynced[dateKey].filter(note => note.id !== noteId);
-
-              // Якщо масив порожній, видаляємо дату
-              if (allNotesSynced[dateKey].length === 0) {
-                delete allNotesSynced[dateKey];
+          if (delNote.status === 200) {
+            let syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
+            if (syncedNotes[currentDate]) {
+              syncedNotes[currentDate] = syncedNotes[currentDate].filter(note => String(note.id) !== noteId);
+              if (syncedNotes[currentDate].length === 0) {
+                delete syncedNotes[currentDate];
               }
+              localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
             }
           }
 
-          localStorage.setItem("all_notes_synced", JSON.stringify(allNotesSynced));
+          // Видалення з DOM
+          const target = document.querySelector(`.note-display[data-note-id="${noteId}"]`);
+          if (target) target.remove();
+        } catch (error) {
+          console.error("Помилка під час видалення замітки:", error);
+        } finally {
+          // У будь-якому випадку прибираємо контейнер редагування
+          container.remove();
+          renderTaskList(new Date());
         }
-
-        // Видалення з DOM
-        const target = document.querySelector(`.note-display[data-note-id="${noteId}"]`);
-        if (target) target.remove();
-        else container.remove();
       }
     } else {
       container.remove();
+      renderTaskList(new Date());
     }
-    renderTaskList(new Date())
   };
+
 }
 
 // Markdown to styled HTML
