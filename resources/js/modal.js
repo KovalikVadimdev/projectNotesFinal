@@ -1,3 +1,11 @@
+"use strict"
+
+import { createUser }  from './createNewUser.js';
+import { authUser } from "./authUser.js";
+import { editEmail } from "./editEmailUser.js";
+import { editInfo } from './editInfoUser.js';
+import { handleUserLogin } from './profileName.js';
+
 class ModalSignin {
   constructor(modal) {
     this.modal = modal;
@@ -81,3 +89,41 @@ if (mainNav) {
     }
   });
 }
+
+
+const signinBtn = document.getElementById("signin");
+
+
+signinBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const email = document.querySelector("#signin-email")?.value.trim();
+    const password = document.querySelector("#signin-password")?.value;
+
+    try {
+      const user = await authUser(email, password);
+
+      if (user && user.id_user) {
+        const { id_user, email, password, nickname, fullname, gender, country } = user;
+
+        localStorage.setItem("id_user", JSON.stringify(id_user));
+        localStorage.setItem("email", JSON.stringify(email));
+        localStorage.setItem("password", JSON.stringify(password));
+        localStorage.setItem("nickname", JSON.stringify(nickname));
+        localStorage.setItem("fullname", JSON.stringify(fullname));
+        localStorage.setItem("gender", JSON.stringify(gender));
+        localStorage.setItem("country", JSON.stringify(country));
+
+        // За потреби можна закрити модальне вікно:
+        document.querySelector(".js-signin-modal")?.classList.remove("signin-modal--is-visible");
+
+        handleUserLogin({ username: nickname, fullName: fullname }, true);
+      } else {
+        alert("Неправильні облікові дані");
+      }
+    } catch (error) {
+      console.error("Помилка під час авторизації:", error);
+      alert("Сталася помилка під час авторизації");
+    }
+  });
+

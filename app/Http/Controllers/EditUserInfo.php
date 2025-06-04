@@ -33,7 +33,7 @@ class EditUserInfo extends Controller {
       }
 
       // Розбиття рядка fullName на частини name, surname, middlename
-      $fullname = explode(' ', trim($request->fullName));
+      $fullname = explode(' ', trim($request->input('fullName')));
 
       // Оновлення даних користувача
       $user->name = $fullname[0] ?? '';

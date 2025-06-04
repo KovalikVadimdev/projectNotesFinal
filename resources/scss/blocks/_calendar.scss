@@ -119,18 +119,15 @@
     }
 
     &-event {
+      display: flex;
+      flex-direction: column;
+      row-gap: 10px;
       padding: 20px;
       height: 100%;
       overflow-y: auto;
       border-left: 1px solid #e0e0e0;
       border-right: 1px solid #e0e0e0;
-      background-image: linear-gradient(
-          to bottom,
-          #e0e0e0 1px,
-          transparent 1px
-      );
-      background-size: 100% 60px;
-      background-position: 0 0;
+      border-bottom: 1px solid #e0e0e0;
 
       &-block {
         display: grid;
