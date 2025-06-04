@@ -23,6 +23,5 @@ import './profileName.js';
 import './exportNote.js';
 import './importNote.js';
 
-
+import './syncNotes.js';
 import './sync.js';
-

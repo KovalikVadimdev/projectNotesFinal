@@ -16,6 +16,7 @@ Route::post('/addNote', [AddNoteController::class, 'addNote']);
 Route::patch('/editNote', [EditNoteController::class, 'editNote']);
 Route::delete('/deleteNote', [DeleteNoteController::class, 'deleteNote']);
 Route::get('/user/{userId}/notes', [GetUserNoteController::class, 'getUserNotes']);
+Route::get('/note/{noteId}', [GetUserNoteController::class, 'getNoteById']);
 
 Route::post('/import', [ImportNoteController::class, 'import']);
 Route::get('/note/{id}/export', [ExportNoteController::class, 'export']);

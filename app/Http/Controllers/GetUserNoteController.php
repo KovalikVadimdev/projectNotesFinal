@@ -25,4 +25,30 @@ class GetUserNoteController extends Controller {
       ], 500);
     }
   }
+
+  /**
+   * Отримати одну замітку за ID
+   */
+  public function getNoteById($noteId) {
+    try {
+      // Отримуємо замітку за ID
+      $note = Note::where('id_note', $noteId)->first();
+
+      if (!$note) {
+        return response()->json([
+          'success' => false,
+          'message' => 'Note not found'
+        ], 404);
+      }
+
+      return response()->json(['note' => $note]);
+
+    } catch (\Exception $e) {
+      return response()->json([
+        'success' => false,
+        'message' => 'Failed to fetch note',
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
 }

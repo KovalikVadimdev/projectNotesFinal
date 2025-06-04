@@ -92,53 +92,53 @@ const signinBtn = document.getElementById("signin");
 
 
 signinBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const email = document.querySelector("#signin-email")?.value.trim();
-    const password = document.querySelector("#signin-password")?.value.trim();
+  const email = document.querySelector("#signin-email")?.value.trim();
+  const password = document.querySelector("#signin-password")?.value.trim();
 
-    try {
-      const user = await authUser(email, password);
+  try {
+    const user = await authUser(email, password);
 
-      if (user && user.id_user) {
-        const { id_user, email, password, nickname, fullname, gender, country, notes } = user;
-        
-        // Store full notes
-        localStorage.setItem("all_notes", JSON.stringify(notes));
-        
-        // Create synced notes object with only id and hash
-        const syncedNotes = {};
-        for (const [date, dateNotes] of Object.entries(notes)) {
-          syncedNotes[date] = dateNotes.map(note => ({
-            id: note.id,
-            hash: note.hash
-          }));
-        }
-        localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+    if (user && user.id_user) {
+      const { id_user, email, password, nickname, fullname, gender, country, notes } = user;
 
-        localStorage.setItem("id_user", id_user);
-        localStorage.setItem("email", email);
-        localStorage.setItem("password", password);
-        localStorage.setItem("nickname", nickname);
-        localStorage.setItem("fullname", fullname);
-        localStorage.setItem("gender", gender);
-        localStorage.setItem("country", country);
+      // Store full notes
+      localStorage.setItem("all_notes", JSON.stringify(notes));
 
-        // За потреби можна закрити модальне вікно:
-        document.querySelector(".js-signin-modal")?.classList.remove("signin-modal--is-visible");
-
-        handleUserLogin({ username: nickname, fullName: fullname }, true);
-
-        document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
-        location.reload();
-      } else {
-        alert("Неправильні облікові дані");
+      // Create synced notes object with only id and hash
+      const syncedNotes = {};
+      for (const [date, dateNotes] of Object.entries(notes)) {
+        syncedNotes[date] = dateNotes.map(note => ({
+          id: note.id,
+          hash: note.hash
+        }));
       }
-    } catch (error) {
-      console.error("Помилка під час авторизації:", error);
-      alert("Сталася помилка під час авторизації");
+      localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+
+      localStorage.setItem("id_user", id_user);
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
+      localStorage.setItem("nickname", nickname);
+      localStorage.setItem("fullname", fullname);
+      localStorage.setItem("gender", gender);
+      localStorage.setItem("country", country);
+
+      // За потреби можна закрити модальне вікно:
+      document.querySelector(".js-signin-modal")?.classList.remove("signin-modal--is-visible");
+
+      handleUserLogin({ username: nickname, fullName: fullname }, true);
+
+      document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
+      location.reload();
+    } else {
+      alert("Неправильні облікові дані");
     }
-  });
+  } catch (error) {
+    console.error("Помилка під час авторизації:", error);
+    alert("Сталася помилка під час авторизації");
+  }
+});
 
 
 const userNamingRaw = localStorage.getItem('nickname');
@@ -161,9 +161,9 @@ profile.addEventListener('click', (e) => {
 });
 
 document.addEventListener('click', () => {
-    if (!dropdown.classList.contains('hidden')) {
-      dropdown.classList.add('hidden');
-    }
+  if (!dropdown.classList.contains('hidden')) {
+    dropdown.classList.add('hidden');
+  }
 });
 
 dropdown.addEventListener('click', (e) => {
@@ -218,17 +218,9 @@ signupBtn.addEventListener("click", async (e) => {
   }
 });
 
-
 const logoutBtn = document.getElementById('dropdown-menu__logout');
 
 logoutBtn.addEventListener('click', () => {
   localStorage.clear();
   location.reload();
 })
-
-
-
-
-
-
-

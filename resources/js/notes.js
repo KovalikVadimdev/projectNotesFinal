@@ -100,14 +100,25 @@ export function createNoteBox(existingNoteElement = null) {
       }
 
       const allNotes = JSON.parse(localStorage.getItem("all_notes")) || {};
-      if (allNotes[currentDate]) {
-        const allNotesIndex = allNotes[currentDate].findIndex(n => n.id === Number(noteId));
-        if (allNotesIndex !== -1) {
-          allNotes[currentDate][allNotesIndex].text = encoded_text;
-          allNotes[currentDate][allNotesIndex].hash = hash_text;
-          localStorage.setItem("all_notes", JSON.stringify(allNotes));
-        }
+
+      if (!allNotes[currentDate]) {
+        allNotes[currentDate] = [];
       }
+
+      const allNotesIndex = allNotes[currentDate].findIndex(n => n.id === Number(noteId));
+      if (allNotesIndex !== -1) {
+        allNotes[currentDate][allNotesIndex].text = encoded_text;
+        allNotes[currentDate][allNotesIndex].hash = hash_text;
+      } else {
+        // If the note doesn't exist in all_notes, add it
+        allNotes[currentDate].push({
+          id: Number(noteId),
+          text: encoded_text,
+          hash: hash_text
+        });
+      }
+
+      localStorage.setItem("all_notes", JSON.stringify(allNotes));
 
       try {
         const updatedNoteData = await editNote(Number(noteId), encoded_text, hash_text);
@@ -277,5 +288,3 @@ function wrapSelection(textarea, wrapper) {
   textarea.selectionStart = start + wrapper.length;
   textarea.selectionEnd = end + wrapper.length;
 }
-
-
