@@ -12,9 +12,6 @@ class EditUserInfo extends Controller {
     $validator = Validator::make($request->all(), [
       'email' => 'required|email',
       'nickname' => 'required|string|max:255',
-      'fullName' => 'string|max:255',
-      'gender' => 'string|in:Men,Woman,Other',
-      'country' => 'string|max:255',
     ]);
 
     // Якщо щось пішло не так тоді відправляється код помилки 422 та саму помилку

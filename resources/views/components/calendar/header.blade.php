@@ -71,12 +71,18 @@
           width="24"
           height="24"
         />
-        <p
-          class="calendar__controls-profile-name"
-          id="profile-user-name"
-        >User
+        <p class="calendar__controls-profile-name" id="profile-user-name">
+          User
         </p>
       </a>
+
+      <!-- Випадаюче меню -->
+      <div id="dropdown-menu" class="dropdown hidden">
+        <button id="dropdown-menu__account">Account</button>
+        <button id="dropdown-menu__import">Import Notes</button>
+        <button id="dropdown-menu__export">Export Notes</button>
+        <button id="dropdown-menu__logout">Logout</button>
+      </div>
     </div>
   </div>
 </header>

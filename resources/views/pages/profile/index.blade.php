@@ -7,6 +7,7 @@
 @endsection
 
 @section('scripts')
+  @vite('resources/js/account.js')
 @endsection
 
 @section('content')

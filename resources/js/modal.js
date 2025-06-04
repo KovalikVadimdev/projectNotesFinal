@@ -90,7 +90,6 @@ if (mainNav) {
   });
 }
 
-
 const signinBtn = document.getElementById("signin");
 
 
@@ -106,18 +105,20 @@ signinBtn.addEventListener("click", async (e) => {
       if (user && user.id_user) {
         const { id_user, email, password, nickname, fullname, gender, country } = user;
 
-        localStorage.setItem("id_user", JSON.stringify(id_user));
-        localStorage.setItem("email", JSON.stringify(email));
-        localStorage.setItem("password", JSON.stringify(password));
-        localStorage.setItem("nickname", JSON.stringify(nickname));
-        localStorage.setItem("fullname", JSON.stringify(fullname));
-        localStorage.setItem("gender", JSON.stringify(gender));
-        localStorage.setItem("country", JSON.stringify(country));
+        localStorage.setItem("id_user", id_user);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("fullname", fullname);
+        localStorage.setItem("gender", gender);
+        localStorage.setItem("country", country);
 
         // За потреби можна закрити модальне вікно:
         document.querySelector(".js-signin-modal")?.classList.remove("signin-modal--is-visible");
 
         handleUserLogin({ username: nickname, fullName: fullname }, true);
+
+        document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
       } else {
         alert("Неправильні облікові дані");
       }
@@ -127,3 +128,36 @@ signinBtn.addEventListener("click", async (e) => {
     }
   });
 
+
+const userNamingRaw = localStorage.getItem('nickname');
+const fullNameRaw = localStorage.getItem('fullname');
+
+const userNaming = userNamingRaw && userNamingRaw !== '' ? userNamingRaw : '';
+const fullName = fullNameRaw && fullNameRaw !== '' ? fullNameRaw : '';
+
+handleUserLogin({ fullName: fullName, username: userNaming }, true);
+
+
+const profile = document.getElementById('drop-down-menu-profile');
+const dropdown = document.getElementById('dropdown-menu');
+
+profile.addEventListener('click', (e) => {
+  dropdown.classList.toggle('hidden');
+  e.stopPropagation();
+});
+
+document.addEventListener('click', () => {
+  if (!dropdown.classList.contains('hidden')) {
+    dropdown.classList.add('hidden');
+  }
+});
+
+dropdown.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
+
+const accountBtn = document.getElementById('dropdown-menu__account');
+
+accountBtn.addEventListener('click', () => {
+  window.location.href = 'http://127.0.0.1:8000/profile';
+});

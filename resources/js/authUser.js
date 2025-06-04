@@ -1,11 +1,12 @@
 "use strict"
 
+import {handleUserLogin} from "./profileName.js";
+
 export async function authUser(email, password) {
   const payload = {
     email: email,
     password: password
   };
-  console.log(payload)
 
   try {
     const response = await fetch('http://localhost:8000/api/login', {
