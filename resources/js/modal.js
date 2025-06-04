@@ -2,8 +2,6 @@
 
 import { createUser }  from './createNewUser.js';
 import { authUser } from "./authUser.js";
-import { editEmail } from "./editEmailUser.js";
-import { editInfo } from './editInfoUser.js';
 import { handleUserLogin } from './profileName.js';
 
 class ModalSignin {
@@ -161,10 +159,8 @@ dropdown.addEventListener('click', (e) => {
 const accountBtn = document.getElementById('dropdown-menu__account');
 
 accountBtn.addEventListener('click', () => {
-  window.location.href = 'http://127.0.0.1:8000/profile';
+  window.location.href = 'http://localhost:8000/profile';
 });
-
-
 
 const signupBtn = document.getElementById('signup');
 

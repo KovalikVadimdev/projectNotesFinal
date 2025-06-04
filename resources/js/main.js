@@ -19,4 +19,5 @@ import './editEmailUser.js';
 import './editInfoUser.js';
 
 import './profileName.js';
-
+import './exportNote.js';
+import './importNote.js';

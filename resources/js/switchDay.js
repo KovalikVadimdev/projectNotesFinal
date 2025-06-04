@@ -11,7 +11,7 @@ const dayEventElement = document.getElementById('day-event');
 const titleElement = document.getElementById('month-title');
 const highlightSpan = document.getElementById('month-title__highlight');
 
-let currentDate = getSelectedDate();
+export let currentDate = getSelectedDate();
 
 function updateMonthHeader(date) {
   const months = [
