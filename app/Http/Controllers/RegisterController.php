@@ -10,17 +10,18 @@ class RegisterController extends Controller {
   public function register(Request $request) {
     $validator = Validator::make($request->all(), [
       'email' => 'required|string|email|max:255|unique:users',
-      'password' => 'required|string|min:6',
       'nickname' => 'required|string|max:255',
     ]);
 
     if ($validator->fails()) {
       return response()->json($validator->errors(), 422);
     }
+
     $user = User::create([
-      'email' => $request->email,
-      'password' => Hash::make($request->password),
-      'nickname' => $request->nickname,
+      'id' => $request->input('id'),
+      'email' => $request->input('email'),
+      'password' => Hash::make($request->input('password')),
+      'nickname' => $request->input('nickname'),
     ]);
 
     $fullname = trim($user->surname . ' ' . $user->name . ' ' . $user->middlename);

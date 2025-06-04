@@ -1,5 +1,6 @@
 "use strict";
 import { notesByDate } from './notesData.js';
+import { decryptString } from './encode.js';
 
 const taskList = document.querySelector('.calendar-sidebar__task-list');
 
@@ -7,7 +8,10 @@ const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 // Функція для форматування дати в YYYY-MM-DD
 function formatDateISO(date) {
-  return date.toISOString().split('T')[0];
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 // Функція для форматування дати для відображення (M/D/YYYY)
@@ -74,9 +78,13 @@ export function renderTaskList(startDate) {
     // Додаємо замітки, якщо є
     const tasksUl = liDay.querySelector('.calendar-sidebar__task-tasks');
     tasks.forEach(task => {
+
       const liTask = document.createElement('li');
 
-      const removedMarkdownText = removeMarkdownFormatting(task.text);
+      const password = localStorage.getItem('password');
+      const decryptNoteText = decryptString(task.text, password);
+
+      const removedMarkdownText = removeMarkdownFormatting(decryptNoteText);
       const textTask = textToLinesArray(removedMarkdownText);
       const firstLineTextTask = textTask[0];
       const truncatedTextTask = truncateString(firstLineTextTask);

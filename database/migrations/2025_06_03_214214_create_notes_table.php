@@ -10,11 +10,11 @@ return new class extends Migration {
    */
   public function up(): void {
     Schema::create('notes', function (Blueprint $table) {
-      $table->id(); // Унікальний ключ замітки
-      $table->unsignedBigInteger('fid_user'); // унікальний ключ користувача
-      $table->string('date'); // Незашифрований текст дати
-      $table->text('text'); // Зашифрований текст замітки
-      $table->string('text_hash'); // Хеш тексту замітки
+      $table->bigInteger('id_note')->primary(); // Унікальний ключ замітки
+      $table->unsignedBigInteger('fid_user');
+      $table->string('date');
+      $table->string('text');
+      $table->string('text_hash');
       $table->foreign('fid_user')->references('id_user')->on('users')->onDelete('cascade');
     });
   }

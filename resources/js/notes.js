@@ -1,6 +1,10 @@
 "use strict"
-import { notesByDate } from "./notesData.js";
-import { renderTaskList } from './asideTask.js';
+import {notesByDate} from "./notesData.js";
+import {renderTaskList} from './asideTask.js';
+import {hashTextSHA256, encryptString} from './encode.js';
+import {addNote} from './addNote.js';
+import {editNote} from './editNote.js';
+import {deleteNote} from "./deleteNote.js";
 
 const notes = document.getElementById("add-note");
 
@@ -39,6 +43,7 @@ export function createNoteBox(existingNoteElement = null) {
   container.appendChild(buttons);
 
   const dayEvent = document.getElementById("day-event");
+  console.log(dayEvent.dataset.date);
   if (existingNoteElement) {
     editor.value = existingNoteElement.dataset.raw || existingNoteElement.innerText;
     container.dataset.existing = "true";
@@ -56,7 +61,7 @@ export function createNoteBox(existingNoteElement = null) {
   buttons.querySelector(".underline").onclick = () => wrapSelection(editor, "_");
 
   // Save
-  buttons.querySelector(".note-save").onclick = () => {
+  buttons.querySelector(".note-save").onclick = async () => {
     const text = editor.value;
     const formattedHTML = parseMarkdownToHTML(text);
     const note = document.createElement("div");
@@ -70,6 +75,16 @@ export function createNoteBox(existingNoteElement = null) {
       notesByDate[currentDate] = [];
     }
 
+    const password = localStorage.getItem('password'); // припускаємо, що збережений
+    if (!password) {
+      alert("Шифрувальний ключ не знайдено!");
+      return;
+    }
+
+    const encoded_text = encryptString(text, password);
+    const hash_text = hashTextSHA256(text);
+    const idUser = localStorage.getItem('id_user');
+
     if (container.dataset.existing === "true") {
       const noteId = container.dataset.noteId;
       note.dataset.noteId = noteId;
@@ -77,13 +92,102 @@ export function createNoteBox(existingNoteElement = null) {
       // Заміна в notesByDate
       const index = notesByDate[currentDate].findIndex(n => n.id === noteId);
       if (index !== -1) {
-        notesByDate[currentDate][index].text = text;
+        notesByDate[currentDate][index] = {
+          id: Number(noteId),
+          text: encoded_text,
+          hash: hash_text
+        };
       }
+
+      const allNotes = JSON.parse(localStorage.getItem("all_notes")) || {};
+      if (allNotes[currentDate]) {
+        const i = allNotes[currentDate].findIndex(n => n.id === noteId);
+        if (i !== -1) {
+          allNotes[currentDate][i] = {
+            id: Number(noteId),
+            text: encoded_text,
+            hash: hash_text
+          };
+        }
+        localStorage.setItem("all_notes", JSON.stringify(allNotes));
+      }
+
+      const editNotes = await editNote(Number(noteId), encoded_text, hash_text);
+
+      // ДОРОБИТИ НОРМАЛЬНУ ЗМІНУ HASH ЗАМІТКИ У ALL_NOTES_SYNCED, і так само і для видалення
+      const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
+      if (!syncedNotes[currentDate]) syncedNotes[currentDate] = [];
+
+      // Діагностування: перевіряємо структуру існуючих нотаток
+      console.log("Існуючі нотатки:", syncedNotes[currentDate]);
+      console.log("Шукаємо noteId:", noteId);
+
+      // Спробуємо різні варіанти пошуку
+      const existingNoteIndex = syncedNotes[currentDate].findIndex(n => {
+        // Перевіряємо різні можливі поля для ID
+        return n.id === noteId || n.noteId === noteId || n.note_id === noteId;
+      });
+
+      console.log("Знайдений індекс:", existingNoteIndex);
+
+      const newHash = editNotes?.text_hash || hash_text;
+
+      if (existingNoteIndex !== -1) {
+        // Оновити існуючу нотатку
+        console.log("Оновлюємо існуючу нотатку");
+        syncedNotes[currentDate][existingNoteIndex].hash = newHash;
+      } else {
+        // Додати нову нотатку
+        console.log("Додаємо нову нотатку");
+        syncedNotes[currentDate].push({
+          id: Number(noteId),
+          noteId: noteId, // Додаємо обидва поля для сумісності
+          hash: newHash
+        });
+      }
+
+      localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+      console.log("Оновлені нотатки:", syncedNotes[currentDate]);
+
       dayEvent.replaceChild(note, container);
+
     } else {
       const noteId = Date.now().toString();
       note.dataset.noteId = noteId;
-      notesByDate[currentDate].push({ id: noteId, text });
+      notesByDate[currentDate].push({
+        id: noteId,
+        text: encoded_text,
+        hash: hash_text
+      });
+
+      const allNotes = JSON.parse(localStorage.getItem("all_notes")) || {};
+
+      if (!allNotes[currentDate]) {
+        allNotes[currentDate] = [];
+      }
+
+      allNotes[currentDate].push({
+        id: noteId,
+        text: encoded_text,
+        hash: hash_text
+      });
+
+      localStorage.setItem("all_notes", JSON.stringify(allNotes));
+
+      const addNotes = await addNote(Number(noteId), Number(idUser), currentDate, encoded_text, hash_text);
+
+      const syncedNotes = JSON.parse(localStorage.getItem("all_notes_synced")) || {};
+
+      if (!syncedNotes[currentDate]) {
+        syncedNotes[currentDate] = [];
+      }
+
+      syncedNotes[currentDate].push({
+        id: addNotes.id_note,
+        hash: addNotes.text_hash
+      });
+      localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
+
       dayEvent.replaceChild(note, container);
     }
     renderTaskList(new Date())
@@ -105,7 +209,7 @@ export function createNoteBox(existingNoteElement = null) {
   };
 
   // Remove
-  buttons.querySelector(".note-remove").onclick = () => {
+  buttons.querySelector(".note-remove").onclick = async () => {
     const currentDate = dayEvent.dataset.date;
 
     if (container.dataset.existing === "true") {
@@ -121,6 +225,48 @@ export function createNoteBox(existingNoteElement = null) {
           if (notesByDate[currentDate].length === 0) {
             delete notesByDate[currentDate];
           }
+        }
+
+        const allNotesStr = localStorage.getItem("all_notes");
+        console.log(allNotesStr)
+        if (allNotesStr) {
+          const allNotes = JSON.parse(allNotesStr);
+
+          // Перебираємо всі дати
+          for (const dateKey in allNotes) {
+            if (Array.isArray(allNotes[dateKey])) {
+              allNotes[dateKey] = allNotes[dateKey].filter(note => note.id !== noteId);
+
+              // Якщо масив порожній, видаляємо дату
+              if (allNotes[dateKey].length === 0) {
+                delete allNotes[dateKey];
+              }
+            }
+          }
+
+          localStorage.setItem("all_notes", JSON.stringify(allNotes));
+        }
+
+        const delNote = await deleteNote(noteId);
+
+        const allNotesSyncedStr = localStorage.getItem("all_notes_synced");
+        console.log(allNotesSyncedStr)
+        if (allNotesSyncedStr) {
+          const allNotesSynced = JSON.parse(allNotesSyncedStr);
+
+          // Перебираємо всі дати
+          for (const dateKey in allNotesSynced) {
+            if (Array.isArray(allNotesSynced[dateKey])) {
+              allNotesSynced[dateKey] = allNotesSynced[dateKey].filter(note => note.id !== noteId);
+
+              // Якщо масив порожній, видаляємо дату
+              if (allNotesSynced[dateKey].length === 0) {
+                delete allNotesSynced[dateKey];
+              }
+            }
+          }
+
+          localStorage.setItem("all_notes_synced", JSON.stringify(allNotesSynced));
         }
 
         // Видалення з DOM
@@ -158,3 +304,5 @@ function wrapSelection(textarea, wrapper) {
   textarea.selectionStart = start + wrapper.length;
   textarea.selectionEnd = end + wrapper.length;
 }
+
+

@@ -37,7 +37,6 @@ class EditEmailController extends Controller {
       // Зберігання змін у БД
       $user->save();
 
-
       // Повернення нового email та код статус 200
       return response()->json([
         'email' => $user->email
