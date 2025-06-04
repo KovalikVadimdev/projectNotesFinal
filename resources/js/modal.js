@@ -97,7 +97,7 @@ signinBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
     const email = document.querySelector("#signin-email")?.value.trim();
-    const password = document.querySelector("#signin-password")?.value;
+    const password = document.querySelector("#signin-password")?.value.trim();
 
     try {
       const user = await authUser(email, password);
@@ -142,14 +142,16 @@ const profile = document.getElementById('drop-down-menu-profile');
 const dropdown = document.getElementById('dropdown-menu');
 
 profile.addEventListener('click', (e) => {
-  dropdown.classList.toggle('hidden');
-  e.stopPropagation();
+  if(!document.querySelector(".calendar__controls-profile").dataset.signIn) {
+    dropdown.classList.toggle('hidden');
+    e.stopPropagation();
+  }
 });
 
 document.addEventListener('click', () => {
-  if (!dropdown.classList.contains('hidden')) {
-    dropdown.classList.add('hidden');
-  }
+    if (!dropdown.classList.contains('hidden')) {
+      dropdown.classList.add('hidden');
+    }
 });
 
 dropdown.addEventListener('click', (e) => {
@@ -161,3 +163,60 @@ const accountBtn = document.getElementById('dropdown-menu__account');
 accountBtn.addEventListener('click', () => {
   window.location.href = 'http://127.0.0.1:8000/profile';
 });
+
+
+
+const signupBtn = document.getElementById('signup');
+
+
+signupBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const nickname = document.querySelector("#signup-username")?.value.trim();
+  const email = document.querySelector("#signup-email")?.value.trim();
+  const password = document.querySelector("#signup-password")?.value.trim();
+  console.log(nickname, email, password);
+
+  try {
+    const user = await createUser(email, password, nickname);
+
+    if (user && user.id_user) {
+      const { id_user, email, password, nickname, fullname, gender, country } = user;
+
+      localStorage.setItem("id_user", id_user);
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
+      localStorage.setItem("nickname", nickname);
+      localStorage.setItem("fullname", fullname);
+      localStorage.setItem("gender", gender);
+      localStorage.setItem("country", country);
+
+      // За потреби можна закрити модальне вікно:
+      document.querySelector(".js-signin-modal")?.classList.remove("signin-modal--is-visible");
+
+      handleUserLogin({ username: nickname, fullName: fullname }, true);
+
+      document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
+    } else {
+      alert("Неправильні облікові дані");
+    }
+  } catch (error) {
+    console.error("Помилка під час авторизації:", error);
+    alert("Сталася помилка під час авторизації");
+  }
+});
+
+
+const logoutBtn = document.getElementById('dropdown-menu__logout');
+
+logoutBtn.addEventListener('click', () => {
+  localStorage.clear();
+  location.reload();
+})
+
+
+
+
+
+
+

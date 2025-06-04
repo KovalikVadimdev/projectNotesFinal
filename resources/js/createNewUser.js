@@ -1,8 +1,7 @@
 "use strict"
 
-export async function createUser(id_user, email, password, nickname) {
+export async function createUser(email, password, nickname) {
   const payload = {
-    id_user: id_user,
     email: email,
     password: password,
     nickname: nickname

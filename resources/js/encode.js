@@ -15,6 +15,8 @@ export function hashTextSHA256(text) {
   return sha256Hash.toString();
 }
 
+console.log(hashTextSHA256("password"))
+
 
 export function encryptString(plaintext, password) {
   if (typeof plaintext !== 'string' || typeof password !== 'string') {
