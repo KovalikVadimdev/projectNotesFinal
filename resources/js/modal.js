@@ -101,7 +101,20 @@ signinBtn.addEventListener("click", async (e) => {
       const user = await authUser(email, password);
 
       if (user && user.id_user) {
-        const { id_user, email, password, nickname, fullname, gender, country } = user;
+        const { id_user, email, password, nickname, fullname, gender, country, notes } = user;
+        
+        // Store full notes
+        localStorage.setItem("all_notes", JSON.stringify(notes));
+        
+        // Create synced notes object with only id and hash
+        const syncedNotes = {};
+        for (const [date, dateNotes] of Object.entries(notes)) {
+          syncedNotes[date] = dateNotes.map(note => ({
+            id: note.id,
+            hash: note.hash
+          }));
+        }
+        localStorage.setItem("all_notes_synced", JSON.stringify(syncedNotes));
 
         localStorage.setItem("id_user", id_user);
         localStorage.setItem("email", email);
@@ -193,6 +206,8 @@ signupBtn.addEventListener("click", async (e) => {
       handleUserLogin({ username: nickname, fullName: fullname }, true);
 
       document.querySelector(".calendar__controls-profile")?.removeAttribute("data-signin");
+
+
     } else {
       alert("Неправильні облікові дані");
     }

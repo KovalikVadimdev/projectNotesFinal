@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +25,25 @@ class LoginController extends Controller {
 
     $fullname = trim($user->surname . ' ' . $user->name . ' ' . $user->middlename);
 
+    // Get user's notes with required fields
+    $notes = Note::where('fid_user', $user->id_user)
+      ->select('id_note', 'date', 'text', 'text_hash')
+      ->get();
+
+    $notesByDate = [];
+    
+    foreach ($notes as $note) {
+      $date = $note->date;
+      if (!isset($notesByDate[$date])) {
+        $notesByDate[$date] = [];
+      }
+      $notesByDate[$date][] = [
+        'id' => $note->id_note,
+        'text' => $note->text,
+        'hash' => $note->text_hash
+      ];
+    }
+
     return response()->json([
       'id_user' => $user->id_user,
       'email' => $user->email,
@@ -32,6 +52,7 @@ class LoginController extends Controller {
       'fullname' => $fullname,
       'gender' => $user->gender,
       'country' => $user->country,
+      'notes' => $notesByDate
     ], 200);
   }
 }

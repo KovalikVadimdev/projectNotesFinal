@@ -1,3 +1,4 @@
+
 import './encode.js';
 import './addNote.js';
 import './editNote.js';
@@ -21,3 +22,7 @@ import './editInfoUser.js';
 import './profileName.js';
 import './exportNote.js';
 import './importNote.js';
+
+
+import './sync.js';
+
