@@ -23,7 +23,7 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install 
 RUN npm run build
 # Кеширование конфигурации, роутов и вьюшек
-RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
+# RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
 # Порт приложения
 EXPOSE 8000
