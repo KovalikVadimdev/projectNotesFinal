@@ -37,7 +37,10 @@ class ModalSignin {
     });
 
     this.hidePasswordBtns.forEach((btn) => {
-      btn.addEventListener("click", () => this.togglePassword(btn));
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.togglePassword(btn);
+      });
     });
   }
 
